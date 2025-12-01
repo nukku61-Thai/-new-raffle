@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>สุ่มรางวัล</title>
+</head>
+<body>
+<h2>กดปุ่มเพื่อสุ่มรางวัล!</h2>
+<button id="raffleBtn">สุ่มรางวัล</button>
+<p id="result"></p>
+
+<script>
+const formLink = "https://forms.gle/zfWHkzmbJ5vXpAh87"; // ลิงก์ฟอร์มกรอกข้อมูลติดต่อ
+const chance = 0.1; // 10% โอกาสได้รางวัล
+const webAppURL = "https://script.google.com/macros/s/AKfycbzQzkT-efh4i9Ki667Re1Bx9N6s1jLHJVCqSg0bTCChWPyl6q7m0aPUK-Lx-1Fwtg7x/exec"; // 
+document.getElementById("raffleBtn").addEventListener("click", function() {
+    let random = Math.random();
+    if (random <= chance) {
+        // ตรวจสอบจำนวนรางวัล
+        fetch(`${webAppURL}?action=check`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.currentWinners >= 20) {
+                document.getElementById("result").innerText = "ขอบคุณค่ะ รางวัลหมดแล้ว";
+            } else {
+                // เพิ่มผู้ชนะ
+                fetch(`${webAppURL}?action=addWinner`)
+                .then(res => res.json())
+                .then(resData => {
+                    if(resData.status === "win"){
+                        window.location.href = formLink;
+                    } else {
+                        document.getElementById("result").innerText = "ขอบคุณค่ะ รางวัลหมดแล้ว";
+                    }
+                });
+            }
+        });
+    } else {
+        document.getElementById("result").innerText = "ขอบคุณค่ะ ครั้งนี้ไม่ได้รางวัล";
+    }
+});
+</script>
+</body>
+</html>
